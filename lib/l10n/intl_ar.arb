@@ -1,0 +1,14 @@
+{
+  "welcomeBack": "مرحباً بعودتك",
+  "signInSubtitle": "سجل دخولك لإدارة صفحتك",
+  "emailOrPhone": "اسم المستخدم",
+  "emailOrPhoneHint": "eg: 123456789",
+  "emailOrPhoneRequired": "يرجى إدخال اسم المستخدم",
+  "password": "كلمة المرور",
+  "passwordRequired": "يرجى إدخال كلمة المرور",
+  "signIn": "تسجيل الدخول",
+  "dontHaveAccount": "ليس لديك حساب؟",
+  "signUp": "إنشاء حساب",
+  "privacyPolicy": "سياسة الخصوصية",
+  "termsOfService": "شروط الخدمة"
+}

@@ -1,0 +1,14 @@
+{
+  "welcomeBack": "Welcome Back",
+  "signInSubtitle": "Sign in to manage your page",
+  "emailOrPhone": "Username",
+  "emailOrPhoneHint": "eg: 123456789",
+  "emailOrPhoneRequired": "Please enter your username",
+  "password": "Password",
+  "passwordRequired": "Please enter your password",
+  "signIn": "Sign In",
+  "dontHaveAccount": "Don't have an account?",
+  "signUp": "Sign Up",
+  "privacyPolicy": "Privacy Policy",
+  "termsOfService": "Terms of Service"
+}

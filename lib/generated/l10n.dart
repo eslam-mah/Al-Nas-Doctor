@@ -164,10 +164,10 @@ class S {
     return Intl.message('Dr. Sarah', name: 'doctorName', desc: '', args: []);
   }
 
-  /// `Search by name...`
+  /// `Search by name or phone number or medical id...`
   String get searchHint {
     return Intl.message(
-      'Search by name...',
+      'Search by name or phone number or medical id...',
       name: 'searchHint',
       desc: '',
       args: [],

@@ -13,7 +13,7 @@
   "termsOfService": "Terms of Service",
   "myPatients": "My Patients",
   "doctorName": "Dr. Sarah",
-  "searchHint": "Search by name...",
+  "searchHint": "Search by name or phone number or medical id...",
   "total": "TOTAL",
   "critical": "CRITICAL",
   "reviews": "REVIEWS",

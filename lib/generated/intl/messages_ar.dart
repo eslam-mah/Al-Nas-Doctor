@@ -79,7 +79,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "reviews": MessageLookupByLibrary.simpleMessage("مراجعات"),
     "save": MessageLookupByLibrary.simpleMessage("حفظ"),
     "schedule": MessageLookupByLibrary.simpleMessage("الجدول"),
-    "searchHint": MessageLookupByLibrary.simpleMessage("البحث بالاسم..."),
+    "searchHint": MessageLookupByLibrary.simpleMessage(
+      "البحث بالاسم أو رقم الهاتف أو الرقم الطبي...",
+    ),
     "settings": MessageLookupByLibrary.simpleMessage("الإعدادات"),
     "signIn": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
     "signInSubtitle": MessageLookupByLibrary.simpleMessage(

@@ -83,7 +83,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "reviews": MessageLookupByLibrary.simpleMessage("REVIEWS"),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "schedule": MessageLookupByLibrary.simpleMessage("Schedule"),
-    "searchHint": MessageLookupByLibrary.simpleMessage("Search by name..."),
+    "searchHint": MessageLookupByLibrary.simpleMessage(
+      "Search by name or phone number or medical id...",
+    ),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "signIn": MessageLookupByLibrary.simpleMessage("Sign In"),
     "signInSubtitle": MessageLookupByLibrary.simpleMessage(

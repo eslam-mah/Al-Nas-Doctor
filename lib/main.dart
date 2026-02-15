@@ -3,6 +3,7 @@ import 'package:alnas_doctor/core/services/http_service/dio_helper.dart';
 import 'package:alnas_doctor/core/services/language_cubit/language_cubit.dart';
 import 'package:alnas_doctor/core/utils/app_router.dart';
 import 'package:alnas_doctor/core/utils/shared_preferences_service.dart';
+import 'package:alnas_doctor/features/authentication/view_model/login_cubit/login_cubit.dart';
 import 'package:alnas_doctor/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -80,7 +81,10 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (context) => LanguageCubit())],
+      providers: [
+        BlocProvider(create: (context) => LanguageCubit()),
+        BlocProvider(create: (context) => LoginCubit()),
+      ],
       child: ScreenUtilInit(
         designSize: const Size(390, 844),
         minTextAdapt: true,

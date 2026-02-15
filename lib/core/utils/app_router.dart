@@ -1,5 +1,7 @@
 import 'package:alnas_doctor/features/authentication/auth_router.dart';
+import 'package:alnas_doctor/features/profile/profile_router.dart';
 import 'package:alnas_doctor/features/splash/splash_screen.dart';
+import 'package:alnas_doctor/features/home/home_router.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -23,10 +25,14 @@ class AppRouter {
       ...AuthRouter.goRoutes,
 
       /// Home Router
-      // ...HomeRouter.goRoutes,
+      /// Home Router
+      ...HomeRouter.goRoutes,
 
       /// Notifications Router
       // ...NotificationsRouter.goRoutes,
+
+      /// Logout Router
+      ...ProfileRouter.goRoutes,
     ],
   );
 }

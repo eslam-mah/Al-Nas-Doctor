@@ -16,7 +16,7 @@ class DioHelper {
   static bool _initialized = false;
 
   /// Base URL for the API - configure this for your backend
-  static const String _baseUrl = 'http://172.16.63.84/alnas_app';
+  static const String _baseUrl = 'https://41.33.8.201:4430/alnas_app';
 
   /// Initialize Dio instance
   /// Call this once in main.dart: await DioHelper.init();
@@ -170,6 +170,9 @@ class DioHelper {
 
     if (requiresAuth) {
       final token = await getToken();
+      print('=================================');
+      print('Token being: $token');
+      print('=================================');
       if (token != null && token.isNotEmpty) {
         headers['Authorization'] = 'Bearer $token';
       }
@@ -215,15 +218,17 @@ class DioHelper {
     required String endpoint,
     required Map<String, dynamic> data,
     bool requiresAuth = false,
+    bool isFormData = false,
     Map<String, dynamic>? headers,
   }) async {
     return _handleRequest(() async {
       final options = await _buildOptions(
         requiresAuth: requiresAuth,
         extraHeaders: headers,
-        contentType: Headers.jsonContentType,
+        contentType: isFormData ? null : Headers.jsonContentType,
       );
-      return _getDio().post(endpoint, data: data, options: options);
+      final dynamic finalData = isFormData ? FormData.fromMap(data) : data;
+      return _getDio().post(endpoint, data: finalData, options: options);
     });
   }
 

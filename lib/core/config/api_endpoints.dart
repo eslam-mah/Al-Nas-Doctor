@@ -1,11 +1,8 @@
 class ApiEndpoints {
   ApiEndpoints._();
-
-  static const String createRequest = '/public/index.php?api=create_request';
-  static const String uploadFiles = '/public/index.php?api=upload_files';
-  static const String track = '/public/index.php?api=track';
-  static const String getPendingRequest =
-      '/routes/api.php?api=get_pending_items';
-  static const String updateRequest = '/routes/api.php?api=update_request';
-  static const String registerFcmToken = '/routes/api.php?api=register_token';
+  static const String doctorLogin = '/routes/api.php?api=doctor_login';
+  static const String doctorChangePassword =
+      '/routes/api.php?api=doctor_change_password';
+  static const String doctorLogout = '/routes/api.php?api=doctor_logout';
+  static const String getPatients = '/routes/api.php?api=get_patients';
 }

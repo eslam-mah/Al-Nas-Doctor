@@ -1,10 +1,14 @@
 import 'package:alnas_doctor/core/config/assets_box.dart';
+import 'package:alnas_doctor/core/services/http_service/user_session.dart';
 import 'package:alnas_doctor/core/utils/pref_keys.dart';
 import 'package:alnas_doctor/core/utils/shared_preferences_service.dart';
 import 'package:alnas_doctor/features/authentication/view/views/sign_in_view.dart';
+import 'package:alnas_doctor/features/home/view/views/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -28,40 +32,47 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(seconds: 1),
     );
 
-    _slideAnimation =
-        Tween<Offset>(
-          begin: const Offset(0, 1), // Starts below
-          end: Offset.zero, // Ends at original position
-        ).animate(
+    _slideAnimation = Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
+        .animate(
           CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn),
         );
 
     _controller.forward();
-    // _registerToken();
 
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         Future.delayed(const Duration(milliseconds: 500), () async {
-          // --- Use go_router for navigation ---
-          // Navigate based on onboarding status
-          final prefs = await SharedPreferencesService.getInstance();
-          final isFirstLaunch =
-              prefs.getBool(PrefKeys.kFirstLaunch, defaultValue: true) ?? true;
-
-          if (mounted) {
-            if (isFirstLaunch) {
-              GoRouter.of(context).go(SignInView.routeName);
-            } else {
-              GoRouter.of(context).go(SignInView.routeName);
-            }
-          }
-          // ------------------------------------
+          await _initAndNavigate();
         });
       }
     });
   }
 
-  // Future<void> _registerToken() async {
+  Future<void> _initAndNavigate() async {
+    final prefs = await SharedPreferencesService.getInstance();
+    final isFirstLaunch =
+        prefs.getBool(PrefKeys.kFirstLaunch, defaultValue: true) ?? true;
+
+    if (!mounted) return;
+
+    // Try to restore user session
+    final isLoggedIn = await UserSession.instance.loadSession();
+
+    // Register FCM token (with userId if logged in)
+    // await _registerToken(
+    //   userId: isLoggedIn ? UserSession.instance.userData?.id?.toString() : null,
+    // );
+
+    if (!mounted) return;
+
+    if (isLoggedIn) {
+      GoRouter.of(context).go(HomeView.routeName);
+    } else {
+      GoRouter.of(context).go(SignInView.routeName);
+    }
+  }
+
+  // Future<void> _registerToken({String? userId}) async {
   //   try {
   //     final messaging = FirebaseMessaging.instance;
   //     final token = await messaging.getToken();
@@ -69,7 +80,6 @@ class _SplashScreenState extends State<SplashScreen>
   //     if (token != null) {
   //       if (!mounted) return;
 
-  //       // Get Device ID
   //       final deviceInfo = DeviceInfoPlugin();
   //       String? deviceId;
 
@@ -85,6 +95,7 @@ class _SplashScreenState extends State<SplashScreen>
   //         context.read<RegisterTokenCubit>().registerToken(
   //           fcmToken: token,
   //           deviceId: deviceId,
+  //           userId: userId,
   //         );
   //       }
   //     }
@@ -101,29 +112,26 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    // ScreenUtil.init is done in MyApp, so we can use the methods here.
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // --- LOGO (Responsive Height) ---
             FadeTransition(
               opacity: _controller,
               child: Image.asset(
                 AssetsBox.logoOnly,
                 height: 80.h,
-                width: 120.w, // Use .h for responsive height
+                width: 120.w,
               ),
             ),
-            // --- TEXT (Responsive Font Size) ---
             SlideTransition(
               position: _slideAnimation,
               child: Image.asset(
                 AssetsBox.textOnly,
                 height: 80.h,
-                width: 120.w, // Use .h for responsive height
+                width: 120.w,
               ),
             ),
           ],

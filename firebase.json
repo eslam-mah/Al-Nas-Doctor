@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"alnas-app","appId":"1:141239274225:android:ca0302d5bde075e0967750","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"alnas-app","configurations":{"android":"1:141239274225:android:ca0302d5bde075e0967750","ios":"1:141239274225:ios:745fdb6cc4859b3b967750"}}}}}}

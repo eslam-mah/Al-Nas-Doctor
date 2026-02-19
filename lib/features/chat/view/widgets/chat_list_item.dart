@@ -71,210 +71,226 @@ class ChatListItem extends StatelessWidget {
     final colors = _accentGradient(chat.status);
     final sColor = _statusColor(chat.status);
 
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 6.h, horizontal: 16.w),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: sColor.withValues(alpha: 0.10),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.r),
-        child: IntrinsicHeight(
-          child: Row(
-            children: [
-              // ── Gradient left accent bar ──
-              Container(
-                width: 5.w,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: colors,
+    return InkWell(
+      onTap: chat.status == 'closed'
+          ? null
+          : () {
+              context.push(
+                ChatDetailPage.routeName,
+                extra: {
+                  'chat_id': chat.id!,
+                  'patient_id': chat.patientId!,
+                  'doctor_id': chat.doctorId!,
+                  'patient_name': chat.patientName ?? 'Patient',
+                },
+              );
+            },
+      borderRadius: BorderRadius.circular(16.r),
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 6.h, horizontal: 16.w),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.r),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: sColor.withValues(alpha: 0.10),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16.r),
+          child: IntrinsicHeight(
+            child: Row(
+              children: [
+                // ── Gradient left accent bar ──
+                Container(
+                  width: 5.w,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: colors,
+                    ),
                   ),
                 ),
-              ),
 
-              // ── Card content ──
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 14.w,
-                    vertical: 14.h,
-                  ),
-                  child: Column(
-                    children: [
-                      // ── Top row: Avatar + Name + Time ──
-                      Row(
-                        children: [
-                          // Avatar with gradient ring
-                          Container(
-                            padding: EdgeInsets.all(2.5.w),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: LinearGradient(
-                                colors: colors,
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                            ),
-                            child: CircleAvatar(
-                              radius: 22.r,
-                              backgroundColor: Colors.white,
-                              child: Text(
-                                chat.patientName
-                                        ?.toString()
-                                        .substring(0, 1)
-                                        .toUpperCase() ??
-                                    "P",
-                                style: TextStyle(
-                                  color: sColor,
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w700,
+                // ── Card content ──
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 14.w,
+                      vertical: 14.h,
+                    ),
+                    child: Column(
+                      children: [
+                        // ── Top row: Avatar + Name + Time ──
+                        Row(
+                          children: [
+                            // Avatar with gradient ring
+                            Container(
+                              padding: EdgeInsets.all(2.5.w),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  colors: colors,
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
                                 ),
                               ),
-                            ),
-                          ),
-                          SizedBox(width: 12.w),
-
-                          // Name + last message
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  chat.patientName ?? "Unknown Patient",
+                              child: CircleAvatar(
+                                radius: 22.r,
+                                backgroundColor: Colors.white,
+                                child: Text(
+                                  chat.patientName
+                                          ?.toString()
+                                          .substring(0, 1)
+                                          .toUpperCase() ??
+                                      "P",
                                   style: TextStyle(
-                                    fontSize: 15.sp,
+                                    color: sColor,
+                                    fontSize: 18.sp,
                                     fontWeight: FontWeight.w700,
-                                    color: AlNasTheme.textDark,
-                                    letterSpacing: 0.1,
                                   ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                if (chat.lastMessage != null) ...[
-                                  SizedBox(height: 3.h),
+                              ),
+                            ),
+                            SizedBox(width: 12.w),
+
+                            // Name + last message
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                                   Text(
-                                    chat.lastMessage!,
+                                    chat.patientName ?? "Unknown Patient",
+                                    style: TextStyle(
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: AlNasTheme.textDark,
+                                      letterSpacing: 0.1,
+                                    ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
+                                  ),
+                                  if (chat.lastMessage != null) ...[
+                                    SizedBox(height: 3.h),
+                                    Text(
+                                      chat.lastMessage!,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 13.sp,
+                                        color: AlNasTheme.textMuted,
+                                        height: 1.3,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+
+                            // Time
+                            if (chat.lastMessageTime != null)
+                              Text(
+                                _formatTime(chat.lastMessageTime!),
+                                style: TextStyle(
+                                  fontSize: 11.sp,
+                                  color: AlNasTheme.textMuted,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                          ],
+                        ),
+
+                        SizedBox(height: 10.h),
+
+                        // ── Bottom row: Status badge + action buttons ──
+                        Row(
+                          children: [
+                            // Status chip
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10.w,
+                                vertical: 4.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: sColor.withValues(alpha: 0.10),
+                                borderRadius: BorderRadius.circular(20.r),
+                                border: Border.all(
+                                  color: sColor.withValues(alpha: 0.25),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    _statusIcon(chat.status),
+                                    size: 14.sp,
+                                    color: sColor,
+                                  ),
+                                  SizedBox(width: 5.w),
+                                  Text(
+                                    _statusLabel(chat.status),
                                     style: TextStyle(
-                                      fontSize: 13.sp,
-                                      color: AlNasTheme.textMuted,
-                                      height: 1.3,
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: sColor,
+                                      letterSpacing: 0.3,
                                     ),
                                   ),
                                 ],
-                              ],
-                            ),
-                          ),
-
-                          // Time
-                          if (chat.lastMessageTime != null)
-                            Text(
-                              _formatTime(chat.lastMessageTime!),
-                              style: TextStyle(
-                                fontSize: 11.sp,
-                                color: AlNasTheme.textMuted,
-                                fontWeight: FontWeight.w500,
                               ),
                             ),
-                        ],
-                      ),
 
-                      SizedBox(height: 10.h),
-
-                      // ── Bottom row: Status badge + action buttons ──
-                      Row(
-                        children: [
-                          // Status chip
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10.w,
-                              vertical: 4.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: sColor.withValues(alpha: 0.10),
-                              borderRadius: BorderRadius.circular(20.r),
-                              border: Border.all(
-                                color: sColor.withValues(alpha: 0.25),
-                                width: 1,
+                            const Spacer(),
+                            if (chat.status != 'closed') ...[
+                              // ── Open Chat button ──
+                              _ActionButton(
+                                icon: Icons.chat_bubble_rounded,
+                                color: AlNasTheme.blue100,
+                                tooltip: 'Open Chat',
+                                onTap: () {
+                                  context.push(
+                                    ChatDetailPage.routeName,
+                                    extra: {
+                                      'chat_id': chat.id!,
+                                      'patient_id': chat.patientId!,
+                                      'doctor_id': chat.doctorId!,
+                                      'patient_name':
+                                          chat.patientName ?? 'Patient',
+                                    },
+                                  );
+                                },
                               ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  _statusIcon(chat.status),
-                                  size: 14.sp,
-                                  color: sColor,
-                                ),
-                                SizedBox(width: 5.w),
-                                Text(
-                                  _statusLabel(chat.status),
-                                  style: TextStyle(
-                                    fontSize: 11.sp,
-                                    fontWeight: FontWeight.w700,
-                                    color: sColor,
-                                    letterSpacing: 0.3,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                              SizedBox(width: 8.w),
 
-                          const Spacer(),
-                          if (chat.status != 'closed') ...[
-                            // ── Open Chat button ──
-                            _ActionButton(
-                              icon: Icons.chat_bubble_rounded,
-                              color: AlNasTheme.blue100,
-                              tooltip: 'Open Chat',
-                              onTap: () {
-                                context.push(
-                                  ChatDetailPage.routeName,
-                                  extra: {
-                                    'chat_id': chat.id!,
-                                    'patient_id': chat.patientId!,
-                                    'doctor_id': chat.doctorId!,
-                                    'patient_name':
-                                        chat.patientName ?? 'Patient',
-                                  },
-                                );
-                              },
-                            ),
-                            SizedBox(width: 8.w),
-
-                            _ActionButton(
-                              icon: Icons.close_rounded,
-                              color: AlNasTheme.red100,
-                              tooltip: 'Close Chat',
-                              onTap: () {
-                                context.read<CloseChatCubit>().closeChat(
-                                  chatId: chat.id!,
-                                );
-                              },
-                            ),
+                              _ActionButton(
+                                icon: Icons.close_rounded,
+                                color: AlNasTheme.red100,
+                                tooltip: 'Close Chat',
+                                onTap: () {
+                                  context.read<CloseChatCubit>().closeChat(
+                                    chatId: chat.id!,
+                                  );
+                                },
+                              ),
+                            ],
                           ],
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

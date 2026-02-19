@@ -1,14 +1,14 @@
 import 'package:alnas_doctor/core/config/assets_box.dart';
 import 'package:alnas_doctor/core/services/http_service/user_session.dart';
+import 'package:alnas_doctor/core/services/notification_service.dart';
 import 'package:alnas_doctor/core/utils/pref_keys.dart';
 import 'package:alnas_doctor/core/utils/shared_preferences_service.dart';
 import 'package:alnas_doctor/features/authentication/view/views/sign_in_view.dart';
 import 'package:alnas_doctor/features/home/view/views/home_view.dart';
+import 'package:alnas_doctor/features/notifications/view_model/register_token_cubit/register_token_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'dart:io';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -49,6 +49,9 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _initAndNavigate() async {
+    // Initialize Notification Service (permissions, listeners, token)
+    await NotificationService().init();
+
     final prefs = await SharedPreferencesService.getInstance();
     final isFirstLaunch =
         prefs.getBool(PrefKeys.kFirstLaunch, defaultValue: true) ?? true;
@@ -58,10 +61,10 @@ class _SplashScreenState extends State<SplashScreen>
     // Try to restore user session
     final isLoggedIn = await UserSession.instance.loadSession();
 
-    // Register FCM token (with userId if logged in)
-    // await _registerToken(
-    //   userId: isLoggedIn ? UserSession.instance.userData?.id?.toString() : null,
-    // );
+    // Register FCM token with userId if logged in
+    if (isLoggedIn) {
+      _registerFcmToken(userId: UserSession.instance.userData?.id);
+    }
 
     if (!mounted) return;
 
@@ -72,37 +75,25 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
-  // Future<void> _registerToken({String? userId}) async {
-  //   try {
-  //     final messaging = FirebaseMessaging.instance;
-  //     final token = await messaging.getToken();
+  /// Register the FCM token with the backend.
+  void _registerFcmToken({int? userId}) {
+    final notificationService = NotificationService();
+    final fcmToken = notificationService.fcmToken;
+    final deviceId = notificationService.deviceId;
 
-  //     if (token != null) {
-  //       if (!mounted) return;
-
-  //       final deviceInfo = DeviceInfoPlugin();
-  //       String? deviceId;
-
-  //       if (Platform.isAndroid) {
-  //         final androidInfo = await deviceInfo.androidInfo;
-  //         deviceId = androidInfo.id;
-  //       } else if (Platform.isIOS) {
-  //         final iosInfo = await deviceInfo.iosInfo;
-  //         deviceId = iosInfo.identifierForVendor;
-  //       }
-
-  //       if (deviceId != null && mounted) {
-  //         context.read<RegisterTokenCubit>().registerToken(
-  //           fcmToken: token,
-  //           deviceId: deviceId,
-  //           userId: userId,
-  //         );
-  //       }
-  //     }
-  //   } catch (e) {
-  //     debugPrint('Error registering token: $e');
-  //   }
-  // }
+    if (fcmToken != null &&
+        fcmToken.isNotEmpty &&
+        deviceId != null &&
+        deviceId.isNotEmpty &&
+        userId != null &&
+        mounted) {
+      context.read<RegisterTokenCubit>().registerToken(
+        fcmToken: fcmToken,
+        deviceId: deviceId,
+        userId: userId,
+      );
+    }
+  }
 
   @override
   void dispose() {

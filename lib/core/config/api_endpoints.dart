@@ -12,4 +12,5 @@ class ApiEndpoints {
   static const String chatList = '/routes/api.php?api=chat_list';
   static const String chatClose = '/routes/api.php?api=chat_close';
   static const String chatMessages = '/routes/api.php?api=chat_messages';
+  static const String registerFcmToken = '/routes/api.php?api=register_token';
 }

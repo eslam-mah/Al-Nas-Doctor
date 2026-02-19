@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:alnas_doctor/core/config/alnas_theme.dart';
 import 'package:alnas_doctor/features/home/data/models/patient_model.dart';
 import 'package:alnas_doctor/features/home/view_model/get_all_patients/get_all_patients_cubit.dart';
 import 'package:alnas_doctor/features/home/view_model/search_patients/search_patients_cubit.dart';
@@ -38,6 +39,15 @@ class _PatientsViewState extends State<PatientsView> {
     _scrollController.dispose();
     _debounceTimer?.cancel();
     super.dispose();
+  }
+
+  Future<void> _onRefresh() async {
+    if (_isSearching) {
+      context.read<SearchPatientsCubit>().reset();
+      context.read<SearchPatientsCubit>().searchPatients(search: _searchQuery);
+    } else {
+      context.read<GetAllPatientsCubit>().refresh();
+    }
   }
 
   void _onScroll() {
@@ -111,119 +121,126 @@ class _PatientsViewState extends State<PatientsView> {
               }
             }
 
-            return CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                SliverPersistentHeader(
-                  delegate: HomeHeaderDelegate(
-                    expandedHeight: 310.h,
-                    collapsedHeight: 180.h,
-                    onSearchChanged: _onSearchChanged,
-                    totalPatients: totalPatients,
-                  ),
-                  pinned: true,
+            return RefreshIndicator(
+              color: AlNasTheme.blue100,
+              onRefresh: _onRefresh,
+              child: CustomScrollView(
+                controller: _scrollController,
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
                 ),
-                // Loading indicator for first page
-                if (isLoading && patients.isEmpty)
-                  SliverFillRemaining(
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: Theme.of(context).primaryColor,
+                slivers: [
+                  SliverPersistentHeader(
+                    delegate: HomeHeaderDelegate(
+                      expandedHeight: 310.h,
+                      collapsedHeight: 180.h,
+                      onSearchChanged: _onSearchChanged,
+                      totalPatients: totalPatients,
+                    ),
+                    pinned: true,
+                  ),
+                  // Loading indicator for first page
+                  if (isLoading && patients.isEmpty)
+                    SliverFillRemaining(
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).primaryColor,
+                        ),
                       ),
                     ),
-                  ),
-                // Error state
-                if (isError && patients.isEmpty)
-                  SliverFillRemaining(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.error_outline,
-                            size: 48.sp,
-                            color: Colors.grey,
-                          ),
-                          SizedBox(height: 16.h),
-                          Text(
-                            errorMessage.isNotEmpty
-                                ? errorMessage
-                                : S.of(context).somethingWentWrong,
-                            style: TextStyle(
-                              fontSize: 16.sp,
+                  // Error state
+                  if (isError && patients.isEmpty)
+                    SliverFillRemaining(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              size: 48.sp,
                               color: Colors.grey,
                             ),
-                          ),
-                          SizedBox(height: 16.h),
-                          ElevatedButton(
-                            onPressed: () {
-                              if (_isSearching) {
-                                context
-                                    .read<SearchPatientsCubit>()
-                                    .searchPatients(search: _searchQuery);
-                              } else {
-                                context.read<GetAllPatientsCubit>().refresh();
-                              }
-                            },
-                            child: const Text('Retry'),
-                          ),
-                        ],
+                            SizedBox(height: 16.h),
+                            Text(
+                              errorMessage.isNotEmpty
+                                  ? errorMessage
+                                  : S.of(context).somethingWentWrong,
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            SizedBox(height: 16.h),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (_isSearching) {
+                                  context
+                                      .read<SearchPatientsCubit>()
+                                      .searchPatients(search: _searchQuery);
+                                } else {
+                                  context.read<GetAllPatientsCubit>().refresh();
+                                }
+                              },
+                              child: const Text('Retry'),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                // Empty state
-                if (!isLoading && !isError && patients.isEmpty)
-                  SliverFillRemaining(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.people_outline,
-                            size: 48.sp,
-                            color: Colors.grey,
-                          ),
-                          SizedBox(height: 16.h),
-                          Text(
-                            'No patients found',
-                            style: TextStyle(
-                              fontSize: 16.sp,
+                  // Empty state
+                  if (!isLoading && !isError && patients.isEmpty)
+                    SliverFillRemaining(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.people_outline,
+                              size: 48.sp,
                               color: Colors.grey,
                             ),
-                          ),
-                        ],
+                            SizedBox(height: 16.h),
+                            Text(
+                              'No patients found',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                // Patient list
-                if (patients.isNotEmpty)
-                  SliverPadding(
-                    padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 20.h),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        if (index < patients.length) {
-                          final item = patients[index];
-                          return PatientCard(
-                            name: item.fullName ?? 'Unknown',
-                            id: item.mrn ?? item.id.toString(),
-                            type: item.specialty ?? 'Unknown',
-                            reading: '---',
-                            unit: S.of(context).mgDl,
-                            status: PatientStatus.stable,
-                            statusText: S.of(context).stable,
+                  // Patient list
+                  if (patients.isNotEmpty)
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 20.h),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          if (index < patients.length) {
+                            final item = patients[index];
+                            return PatientCard(
+                              name: item.fullName ?? 'Unknown',
+                              id: item.mrn ?? item.id.toString(),
+                              type: item.specialty ?? 'Unknown',
+                              reading: '---',
+                              unit: S.of(context).mgDl,
+                              status: PatientStatus.stable,
+                              statusText: S.of(context).stable,
+                            );
+                          }
+                          // Loading indicator at bottom
+                          return Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16.h),
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           );
-                        }
-                        // Loading indicator at bottom
-                        return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }, childCount: patients.length + (hasMore ? 1 : 0)),
+                        }, childCount: patients.length + (hasMore ? 1 : 0)),
+                      ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             );
           },
         );

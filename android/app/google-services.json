@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "141239274225",
+    "project_id": "alnas-app",
+    "storage_bucket": "alnas-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141239274225:android:abd3788d974fd2a3967750",
+        "android_client_info": {
+          "package_name": "com.example.alnas_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKF8cw5UNcmYb71bBbvYx2w5ZdT8BWqBM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141239274225:android:ca0302d5bde075e0967750",
+        "android_client_info": {
+          "package_name": "com.example.alnas_doctor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKF8cw5UNcmYb71bBbvYx2w5ZdT8BWqBM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

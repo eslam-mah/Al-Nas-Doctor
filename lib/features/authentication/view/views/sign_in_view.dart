@@ -1,8 +1,11 @@
 import 'package:alnas_doctor/core/config/alnas_theme.dart';
 import 'package:alnas_doctor/core/config/assets_box.dart';
+import 'package:alnas_doctor/core/services/http_service/user_session.dart';
+import 'package:alnas_doctor/core/services/notification_service.dart';
 import 'package:alnas_doctor/features/authentication/view/widgets/custom_auth_text_field.dart';
 import 'package:alnas_doctor/features/authentication/view_model/login_cubit/login_cubit.dart';
 import 'package:alnas_doctor/features/home/view/views/home_view.dart';
+import 'package:alnas_doctor/features/notifications/view_model/register_token_cubit/register_token_cubit.dart';
 import 'package:alnas_doctor/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,6 +48,27 @@ class _SignInViewState extends State<SignInView> {
     }
   }
 
+  /// Register the FCM token with the backend after login.
+  void _registerFcmToken() {
+    final notificationService = NotificationService();
+    final fcmToken = notificationService.fcmToken;
+    final deviceId = notificationService.deviceId;
+    final userId = UserSession.instance.userData?.id;
+
+    if (fcmToken != null &&
+        fcmToken.isNotEmpty &&
+        deviceId != null &&
+        deviceId.isNotEmpty &&
+        userId != null &&
+        mounted) {
+      context.read<RegisterTokenCubit>().registerToken(
+        fcmToken: fcmToken,
+        deviceId: deviceId,
+        userId: userId,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = S.of(context);
@@ -55,6 +79,8 @@ class _SignInViewState extends State<SignInView> {
       body: BlocConsumer<LoginCubit, LoginState>(
         listener: (context, state) {
           if (state is LoginSuccess) {
+            // Register FCM token with the new userId after login
+            _registerFcmToken();
             GoRouter.of(context).go(HomeView.routeName);
           } else if (state is LoginFailure) {
             ScaffoldMessenger.of(context).showSnackBar(

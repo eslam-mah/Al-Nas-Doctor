@@ -22,10 +22,16 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "accept": MessageLookupByLibrary.simpleMessage("قبول"),
+    "accepted": MessageLookupByLibrary.simpleMessage("مقبول"),
     "arabic": MessageLookupByLibrary.simpleMessage("العربية"),
     "cancel": MessageLookupByLibrary.simpleMessage("إلغاء"),
     "changeLanguage": MessageLookupByLibrary.simpleMessage("تغيير اللغة"),
     "changePassword": MessageLookupByLibrary.simpleMessage("تغيير كلمة المرور"),
+    "chatRequests": MessageLookupByLibrary.simpleMessage("طلبات المحادثة"),
+    "chatWith": MessageLookupByLibrary.simpleMessage("محادثة مع"),
+    "chats": MessageLookupByLibrary.simpleMessage("المحادثات"),
+    "closeChat": MessageLookupByLibrary.simpleMessage("إغلاق المحادثة"),
     "confirm": MessageLookupByLibrary.simpleMessage("تأكيد"),
     "confirmNewPassword": MessageLookupByLibrary.simpleMessage(
       "تأكيد كلمة المرور الجديدة",
@@ -33,10 +39,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "confirmNewPasswordHint": MessageLookupByLibrary.simpleMessage(
       "أعد إدخال كلمة المرور الجديدة",
     ),
+    "connecting": MessageLookupByLibrary.simpleMessage("جاري الاتصال..."),
+    "connectingToChat": MessageLookupByLibrary.simpleMessage(
+      "جاري الاتصال بالمحادثة...",
+    ),
+    "connectionLost": MessageLookupByLibrary.simpleMessage("انقطع الاتصال"),
     "critical": MessageLookupByLibrary.simpleMessage("حرج"),
     "currentPassword": MessageLookupByLibrary.simpleMessage(
       "كلمة المرور الحالية",
     ),
+    "disconnected": MessageLookupByLibrary.simpleMessage("غير متصل"),
     "doctorName": MessageLookupByLibrary.simpleMessage("د. سارة"),
     "dontHaveAccount": MessageLookupByLibrary.simpleMessage("ليس لديك حساب؟"),
     "emailOrPhone": MessageLookupByLibrary.simpleMessage("اسم المستخدم"),
@@ -58,10 +70,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "logoutConfirmation": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد أنك تريد تسجيل الخروج؟",
     ),
+    "manageYourConversation": MessageLookupByLibrary.simpleMessage(
+      "إدارة المحادثات",
+    ),
     "messages": MessageLookupByLibrary.simpleMessage("الرسائل"),
     "mgDl": MessageLookupByLibrary.simpleMessage("ملجم/ديسيلتر"),
     "myPatients": MessageLookupByLibrary.simpleMessage("مرضاي"),
     "newPassword": MessageLookupByLibrary.simpleMessage("كلمة المرور الجديدة"),
+    "noChatRequests": MessageLookupByLibrary.simpleMessage(
+      "لا توجد طلبات معلقة",
+    ),
+    "noChats": MessageLookupByLibrary.simpleMessage("لا توجد محادثات"),
+    "noMessagesYet": MessageLookupByLibrary.simpleMessage("لا توجد رسائل بعد"),
+    "offline": MessageLookupByLibrary.simpleMessage("غير متصل"),
+    "online": MessageLookupByLibrary.simpleMessage("متصل"),
+    "openChat": MessageLookupByLibrary.simpleMessage("فتح المحادثة"),
     "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
     "passwordChangedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "تم تغيير كلمة المرور بنجاح",
@@ -73,9 +96,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "كلمات المرور غير متطابقة",
     ),
     "patients": MessageLookupByLibrary.simpleMessage("المرضى"),
+    "pending": MessageLookupByLibrary.simpleMessage("قيد الانتظار"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("سياسة الخصوصية"),
     "profile": MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
+    "reconnect": MessageLookupByLibrary.simpleMessage("إعادة الاتصال"),
+    "reconnecting": MessageLookupByLibrary.simpleMessage("إعادة الاتصال..."),
+    "reconnectingToChat": MessageLookupByLibrary.simpleMessage(
+      "جاري إعادة الاتصال بالمحادثة...",
+    ),
+    "rejected": MessageLookupByLibrary.simpleMessage("مرفوض"),
     "requiresAttention": MessageLookupByLibrary.simpleMessage("يتطلب انتباه"),
+    "retry": MessageLookupByLibrary.simpleMessage("إعادة المحاولة"),
     "reviews": MessageLookupByLibrary.simpleMessage("مراجعات"),
     "save": MessageLookupByLibrary.simpleMessage("حفظ"),
     "schedule": MessageLookupByLibrary.simpleMessage("الجدول"),
@@ -91,8 +122,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage("حدث خطأ ما"),
     "stable": MessageLookupByLibrary.simpleMessage("مستقر"),
     "stablePatients": MessageLookupByLibrary.simpleMessage("حالات مستقرة"),
+    "startConversation": MessageLookupByLibrary.simpleMessage(
+      "أرسل رسالة لبدء المحادثة",
+    ),
     "termsOfService": MessageLookupByLibrary.simpleMessage("شروط الخدمة"),
     "total": MessageLookupByLibrary.simpleMessage("المجموع"),
+    "typeAMessage": MessageLookupByLibrary.simpleMessage("اكتب رسالة..."),
     "warning": MessageLookupByLibrary.simpleMessage("تحذير"),
     "welcomeBack": MessageLookupByLibrary.simpleMessage("مرحباً بعودتك"),
   };

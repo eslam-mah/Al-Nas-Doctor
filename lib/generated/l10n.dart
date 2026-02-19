@@ -423,6 +423,196 @@ class S {
   String get english {
     return Intl.message('English', name: 'english', desc: '', args: []);
   }
+
+  /// `Chat Requests`
+  String get chatRequests {
+    return Intl.message(
+      'Chat Requests',
+      name: 'chatRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chats`
+  String get chats {
+    return Intl.message('Chats', name: 'chats', desc: '', args: []);
+  }
+
+  /// `No pending requests`
+  String get noChatRequests {
+    return Intl.message(
+      'No pending requests',
+      name: 'noChatRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No chats available`
+  String get noChats {
+    return Intl.message(
+      'No chats available',
+      name: 'noChats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Accept`
+  String get accept {
+    return Intl.message('Accept', name: 'accept', desc: '', args: []);
+  }
+
+  /// `Pending`
+  String get pending {
+    return Intl.message('Pending', name: 'pending', desc: '', args: []);
+  }
+
+  /// `Accepted`
+  String get accepted {
+    return Intl.message('Accepted', name: 'accepted', desc: '', args: []);
+  }
+
+  /// `Rejected`
+  String get rejected {
+    return Intl.message('Rejected', name: 'rejected', desc: '', args: []);
+  }
+
+  /// `Close Chat`
+  String get closeChat {
+    return Intl.message('Close Chat', name: 'closeChat', desc: '', args: []);
+  }
+
+  /// `Open Chat`
+  String get openChat {
+    return Intl.message('Open Chat', name: 'openChat', desc: '', args: []);
+  }
+
+  /// `Manage Your Conversations`
+  String get manageYourConversation {
+    return Intl.message(
+      'Manage Your Conversations',
+      name: 'manageYourConversation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type a message...`
+  String get typeAMessage {
+    return Intl.message(
+      'Type a message...',
+      name: 'typeAMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Messages Yet`
+  String get noMessagesYet {
+    return Intl.message(
+      'No Messages Yet',
+      name: 'noMessagesYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send a message to start the conversation`
+  String get startConversation {
+    return Intl.message(
+      'Send a message to start the conversation',
+      name: 'startConversation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connecting to chat...`
+  String get connectingToChat {
+    return Intl.message(
+      'Connecting to chat...',
+      name: 'connectingToChat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Online`
+  String get online {
+    return Intl.message('Online', name: 'online', desc: '', args: []);
+  }
+
+  /// `Offline`
+  String get offline {
+    return Intl.message('Offline', name: 'offline', desc: '', args: []);
+  }
+
+  /// `Connecting...`
+  String get connecting {
+    return Intl.message(
+      'Connecting...',
+      name: 'connecting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reconnecting...`
+  String get reconnecting {
+    return Intl.message(
+      'Reconnecting...',
+      name: 'reconnecting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reconnecting to chat...`
+  String get reconnectingToChat {
+    return Intl.message(
+      'Reconnecting to chat...',
+      name: 'reconnectingToChat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connection lost`
+  String get connectionLost {
+    return Intl.message(
+      'Connection lost',
+      name: 'connectionLost',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Disconnected`
+  String get disconnected {
+    return Intl.message(
+      'Disconnected',
+      name: 'disconnected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Retry`
+  String get retry {
+    return Intl.message('Retry', name: 'retry', desc: '', args: []);
+  }
+
+  /// `Reconnect`
+  String get reconnect {
+    return Intl.message('Reconnect', name: 'reconnect', desc: '', args: []);
+  }
+
+  /// `Chat with`
+  String get chatWith {
+    return Intl.message('Chat with', name: 'chatWith', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

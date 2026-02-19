@@ -1,5 +1,10 @@
 import 'package:alnas_doctor/core/config/alnas_theme.dart';
 import 'package:alnas_doctor/features/authentication/view_model/logout_cubit/logout_cubit.dart';
+import 'package:alnas_doctor/features/chat/view/views/messages_view.dart';
+import 'package:alnas_doctor/features/chat/view_model/accept_pending_request_cubit/accept_request_cubit.dart';
+import 'package:alnas_doctor/features/chat/view_model/close_chat_cubit/close_chat_cubit.dart';
+import 'package:alnas_doctor/features/chat/view_model/get_chat_list_cubit/get_chat_list_cubit.dart';
+import 'package:alnas_doctor/features/chat/view_model/get_pending_requests_cubit/get_pending_requests_cubit.dart';
 import 'package:alnas_doctor/features/profile/view/views/profile_page.dart';
 import 'package:alnas_doctor/generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +26,17 @@ class _HomeViewState extends State<HomeView> {
   final List<Widget> _views = [
     const PatientsView(),
     const Center(child: Text('Schedule View')), // Placeholder
-    const Center(child: Text('Messages View')), // Placeholder
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => GetChatListCubit()..getChatList()),
+        BlocProvider(
+          create: (context) => GetPendingRequestsCubit()..getPendingRequests(),
+        ),
+        BlocProvider(create: (context) => AcceptRequestCubit()),
+        BlocProvider(create: (context) => CloseChatCubit()),
+      ],
+      child: const MessagesView(),
+    ), // Placeholder
     BlocProvider(
       create: (context) => LogoutCubit(),
       child: const ProfilePage(),
@@ -42,7 +57,7 @@ class _HomeViewState extends State<HomeView> {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),

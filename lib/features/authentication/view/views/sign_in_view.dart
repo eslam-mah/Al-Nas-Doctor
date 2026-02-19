@@ -207,7 +207,9 @@ class _SignInViewState extends State<SignInView> {
         style: ElevatedButton.styleFrom(
           backgroundColor: AlNasTheme.primaryBlue,
           foregroundColor: Colors.white,
-          disabledBackgroundColor: AlNasTheme.primaryBlue.withOpacity(0.6),
+          disabledBackgroundColor: AlNasTheme.primaryBlue.withValues(
+            alpha: 0.6,
+          ),
           disabledForegroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.r),

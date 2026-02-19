@@ -22,10 +22,16 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "accept": MessageLookupByLibrary.simpleMessage("Accept"),
+    "accepted": MessageLookupByLibrary.simpleMessage("Accepted"),
     "arabic": MessageLookupByLibrary.simpleMessage("Arabic"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "changeLanguage": MessageLookupByLibrary.simpleMessage("Change Language"),
     "changePassword": MessageLookupByLibrary.simpleMessage("Change Password"),
+    "chatRequests": MessageLookupByLibrary.simpleMessage("Chat Requests"),
+    "chatWith": MessageLookupByLibrary.simpleMessage("Chat with"),
+    "chats": MessageLookupByLibrary.simpleMessage("Chats"),
+    "closeChat": MessageLookupByLibrary.simpleMessage("Close Chat"),
     "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
     "confirmNewPassword": MessageLookupByLibrary.simpleMessage(
       "Confirm New Password",
@@ -33,8 +39,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "confirmNewPasswordHint": MessageLookupByLibrary.simpleMessage(
       "Re-enter new password",
     ),
+    "connecting": MessageLookupByLibrary.simpleMessage("Connecting..."),
+    "connectingToChat": MessageLookupByLibrary.simpleMessage(
+      "Connecting to chat...",
+    ),
+    "connectionLost": MessageLookupByLibrary.simpleMessage("Connection lost"),
     "critical": MessageLookupByLibrary.simpleMessage("CRITICAL"),
     "currentPassword": MessageLookupByLibrary.simpleMessage("Current Password"),
+    "disconnected": MessageLookupByLibrary.simpleMessage("Disconnected"),
     "doctorName": MessageLookupByLibrary.simpleMessage("Dr. Sarah"),
     "dontHaveAccount": MessageLookupByLibrary.simpleMessage(
       "Don\'t have an account?",
@@ -60,10 +72,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "logoutConfirmation": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to logout?",
     ),
+    "manageYourConversation": MessageLookupByLibrary.simpleMessage(
+      "Manage Your Conversations",
+    ),
     "messages": MessageLookupByLibrary.simpleMessage("Messages"),
     "mgDl": MessageLookupByLibrary.simpleMessage("mg/dL"),
     "myPatients": MessageLookupByLibrary.simpleMessage("My Patients"),
     "newPassword": MessageLookupByLibrary.simpleMessage("New Password"),
+    "noChatRequests": MessageLookupByLibrary.simpleMessage(
+      "No pending requests",
+    ),
+    "noChats": MessageLookupByLibrary.simpleMessage("No chats available"),
+    "noMessagesYet": MessageLookupByLibrary.simpleMessage("No Messages Yet"),
+    "offline": MessageLookupByLibrary.simpleMessage("Offline"),
+    "online": MessageLookupByLibrary.simpleMessage("Online"),
+    "openChat": MessageLookupByLibrary.simpleMessage("Open Chat"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "passwordChangedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Password changed successfully",
@@ -75,11 +98,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Passwords do not match",
     ),
     "patients": MessageLookupByLibrary.simpleMessage("Patients"),
+    "pending": MessageLookupByLibrary.simpleMessage("Pending"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
     "profile": MessageLookupByLibrary.simpleMessage("Profile"),
+    "reconnect": MessageLookupByLibrary.simpleMessage("Reconnect"),
+    "reconnecting": MessageLookupByLibrary.simpleMessage("Reconnecting..."),
+    "reconnectingToChat": MessageLookupByLibrary.simpleMessage(
+      "Reconnecting to chat...",
+    ),
+    "rejected": MessageLookupByLibrary.simpleMessage("Rejected"),
     "requiresAttention": MessageLookupByLibrary.simpleMessage(
       "REQUIRES ATTENTION",
     ),
+    "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "reviews": MessageLookupByLibrary.simpleMessage("REVIEWS"),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "schedule": MessageLookupByLibrary.simpleMessage("Schedule"),
@@ -97,8 +128,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "stable": MessageLookupByLibrary.simpleMessage("Stable"),
     "stablePatients": MessageLookupByLibrary.simpleMessage("STABLE PATIENTS"),
+    "startConversation": MessageLookupByLibrary.simpleMessage(
+      "Send a message to start the conversation",
+    ),
     "termsOfService": MessageLookupByLibrary.simpleMessage("Terms of Service"),
     "total": MessageLookupByLibrary.simpleMessage("TOTAL"),
+    "typeAMessage": MessageLookupByLibrary.simpleMessage("Type a message..."),
     "warning": MessageLookupByLibrary.simpleMessage("Warning"),
     "welcomeBack": MessageLookupByLibrary.simpleMessage("Welcome Back"),
   };

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:alnas_doctor/core/services/http_service/dio_helper.dart';
-import 'package:alnas_doctor/features/chat/data/models/message_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -14,8 +13,8 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /// ```dart
 /// final wsService = WebSocketService();
 /// await wsService.connect();
-/// wsService.messageStream.listen((message) { ... });
-/// wsService.sendMessage(messageModel);
+/// wsService.messageStream.listen((data) { ... });
+/// wsService.sendMessage({'type': 'join', 'chat_id': 1});
 /// wsService.disconnect();
 /// ```
 class WebSocketService {
@@ -29,17 +28,17 @@ class WebSocketService {
   static const int _maxReconnectAttempts = 5;
   static const Duration _initialReconnectDelay = Duration(seconds: 3);
 
-  /// Stream controller for incoming messages
-  final StreamController<MessageModel> _messageController =
-      StreamController<MessageModel>.broadcast();
+  /// Stream controller for incoming raw messages (Map<String, dynamic>)
+  final StreamController<Map<String, dynamic>> _messageController =
+      StreamController<Map<String, dynamic>>.broadcast();
 
   /// Stream controller for connection status
   final StreamController<WebSocketConnectionStatus>
   _connectionStatusController =
       StreamController<WebSocketConnectionStatus>.broadcast();
 
-  /// Stream of incoming messages
-  Stream<MessageModel> get messageStream => _messageController.stream;
+  /// Stream of incoming messages as raw maps
+  Stream<Map<String, dynamic>> get messageStream => _messageController.stream;
 
   /// Stream of connection status changes
   Stream<WebSocketConnectionStatus> get connectionStatusStream =>
@@ -118,8 +117,8 @@ class WebSocketService {
     }
   }
 
-  /// Send a message through the WebSocket
-  void sendMessage(MessageModel message) {
+  /// Send a message through the WebSocket (accepts raw Map)
+  void sendMessage(Map<String, dynamic> data) {
     if (!_isConnected || _channel == null) {
       if (kDebugMode) {
         debugPrint('WebSocket: Cannot send message - not connected');
@@ -128,7 +127,7 @@ class WebSocketService {
     }
 
     try {
-      final jsonStr = jsonEncode(message.toJson());
+      final jsonStr = jsonEncode(data);
       _channel!.sink.add(jsonStr);
       if (kDebugMode) {
         debugPrint('WebSocket: Message sent - $jsonStr');
@@ -165,13 +164,13 @@ class WebSocketService {
   }
 
   /// Dispose resources
-  void dispose() {
+  Future<void> dispose() async {
     _intentionalDisconnect = true;
     _reconnectTimer?.cancel();
 
     if (_channel != null) {
       try {
-        _channel!.sink.close();
+        await _channel!.sink.close();
       } catch (_) {}
     }
 
@@ -193,15 +192,8 @@ class WebSocketService {
 
       if (data is String) {
         final Map<String, dynamic> jsonData = jsonDecode(data);
-
-        // Ignore server-side ping/pong frames
-        if (jsonData.containsKey('type') &&
-            (jsonData['type'] == 'ping' || jsonData['type'] == 'pong')) {
-          return;
-        }
-
-        final message = MessageModel.fromJson(jsonData);
-        _messageController.add(message);
+        // Forward the raw map to listeners — the cubit handles type routing
+        _messageController.add(jsonData);
       }
     } catch (e) {
       if (kDebugMode) {

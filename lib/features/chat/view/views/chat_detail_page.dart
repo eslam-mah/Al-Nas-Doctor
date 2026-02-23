@@ -96,7 +96,14 @@ class _ChatDetailPageState extends State<ChatDetailPage>
 
           // ── Messages Area ──
           Expanded(
-            child: BlocBuilder<ChatDetailCubit, ChatDetailState>(
+            child: BlocConsumer<ChatDetailCubit, ChatDetailState>(
+              listener: (context, state) {
+                // Auto-scroll to bottom when a new message arrives or is sent
+                if (state is ChatDetailMessageReceived ||
+                    state is ChatDetailMessageSent) {
+                  _scrollToBottom();
+                }
+              },
               builder: (context, state) {
                 final messages = _extractMessages(state);
 
@@ -125,13 +132,17 @@ class _ChatDetailPageState extends State<ChatDetailPage>
   }
 
   List<MessageModel> _extractMessages(ChatDetailState state) {
-    if (state is ChatDetailConnected) return state.messages;
-    if (state is ChatDetailMessageReceived) return state.messages;
-    if (state is ChatDetailMessageSent) return state.messages;
-    if (state is ChatDetailDisconnected) return state.messages;
-    if (state is ChatDetailReconnecting) return state.messages;
-    if (state is ChatDetailConnectionError) return state.messages;
-    return [];
+    List<MessageModel> messages = [];
+    if (state is ChatDetailConnected) messages = state.messages;
+    if (state is ChatDetailMessageReceived) messages = state.messages;
+    if (state is ChatDetailMessageSent) messages = state.messages;
+    if (state is ChatDetailDisconnected) messages = state.messages;
+    if (state is ChatDetailReconnecting) messages = state.messages;
+    if (state is ChatDetailConnectionError) messages = state.messages;
+    // Filter out any messages with null/empty text (safety net)
+    return messages
+        .where((m) => m.message != null && m.message!.trim().isNotEmpty)
+        .toList();
   }
 
   Widget _buildLoadingState() {

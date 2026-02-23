@@ -21,17 +21,24 @@ class MessageModel {
     this.id,
   });
 
+  /// Safely parse a dynamic value to int (handles both int and String).
+  static int? _toInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    return int.tryParse(value.toString());
+  }
+
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel(
-      chatId: json['chat_id'],
-      senderId: json['sender_id'],
-      senderType: json['sender_type'],
-      receiverId: json['receiver_id'],
-      receiverType: json['receiver_type'],
-      message: json['message'],
-      messageType: json['message_type'],
-      createdAt: json['created_at'],
-      id: json['id'],
+      chatId: _toInt(json['chat_id']),
+      senderId: _toInt(json['sender_id']),
+      senderType: json['sender_type']?.toString(),
+      receiverId: _toInt(json['receiver_id']),
+      receiverType: json['receiver_type']?.toString(),
+      message: json['message']?.toString(),
+      messageType: json['message_type']?.toString(),
+      createdAt: json['created_at']?.toString(),
+      id: _toInt(json['message_id'] ?? json['id']),
     );
   }
 

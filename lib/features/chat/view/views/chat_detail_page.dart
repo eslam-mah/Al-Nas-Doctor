@@ -1,7 +1,10 @@
 import 'package:alnas_doctor/core/config/alnas_theme.dart';
 import 'package:alnas_doctor/features/chat/data/models/message_model.dart';
 import 'package:alnas_doctor/features/chat/view_model/chat_detail_cubit/chat_detail_cubit.dart';
+import 'package:alnas_doctor/features/chat/view_model/close_chat_cubit/close_chat_cubit.dart';
 import 'package:alnas_doctor/generated/l10n.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,6 +17,7 @@ class ChatDetailPage extends StatefulWidget {
   final int patientId;
   final int doctorId;
   final String patientName;
+  final bool isClosed;
 
   const ChatDetailPage({
     super.key,
@@ -21,6 +25,7 @@ class ChatDetailPage extends StatefulWidget {
     required this.patientId,
     required this.doctorId,
     required this.patientName,
+    this.isClosed = false,
   });
 
   @override
@@ -75,9 +80,39 @@ class _ChatDetailPageState extends State<ChatDetailPage>
       body: Column(
         children: [
           // ── Gradient Header ──
-          _ChatHeader(
-            patientName: widget.patientName,
-            onBack: () => Navigator.of(context).pop(),
+          BlocListener<CloseChatCubit, CloseChatState>(
+            listener: (context, state) {
+              if (state is CloseChatSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(S.of(context).closeChatSuccess),
+                    backgroundColor: const Color(0xFF00C853),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                );
+                Navigator.of(context).pop();
+              } else if (state is CloseChatFailure) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(S.of(context).closeChatFailed),
+                    backgroundColor: const Color(0xFFFF1744),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                );
+              }
+            },
+            child: _ChatHeader(
+              patientName: widget.patientName,
+              chatId: widget.chatId,
+              isClosed: widget.isClosed,
+              onBack: () => Navigator.of(context).pop(),
+            ),
           ),
 
           // ── Connection Status Banner ──
@@ -120,12 +155,15 @@ class _ChatDetailPageState extends State<ChatDetailPage>
             ),
           ),
 
-          // ── Message Input ──
-          _MessageInput(
-            controller: _messageController,
-            focusNode: _focusNode,
-            onSend: _sendMessage,
-          ),
+          // ── Message Input or Closed Banner ──
+          if (widget.isClosed)
+            _ChatClosedBanner()
+          else
+            _MessageInput(
+              controller: _messageController,
+              focusNode: _focusNode,
+              onSend: _sendMessage,
+            ),
         ],
       ),
     );
@@ -387,9 +425,121 @@ class _DateSeparator extends StatelessWidget {
 // ══════════════════════════════════════════════════════════════════
 class _ChatHeader extends StatelessWidget {
   final String patientName;
+  final int chatId;
+  final bool isClosed;
   final VoidCallback onBack;
 
-  const _ChatHeader({required this.patientName, required this.onBack});
+  const _ChatHeader({
+    required this.patientName,
+    required this.chatId,
+    this.isClosed = false,
+    required this.onBack,
+  });
+
+  void _showCloseChatDialog(BuildContext context) {
+    final closeChatCubit = context.read<CloseChatCubit>();
+    showDialog(
+      context: context,
+      builder: (dialogContext) => BlocProvider.value(
+        value: closeChatCubit,
+        child: AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF1744).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Icon(
+                  Icons.close_rounded,
+                  color: const Color(0xFFFF1744),
+                  size: 22.sp,
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Text(
+                S.of(context).closeChat,
+                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+          content: Text(
+            S.of(context).closeChatConfirmation,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: AlNasTheme.textMuted,
+              height: 1.5,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(
+                S.of(context).cancel,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AlNasTheme.textMuted,
+                ),
+              ),
+            ),
+            BlocBuilder<CloseChatCubit, CloseChatState>(
+              builder: (ctx, state) {
+                final isLoading = state is CloseChatLoading;
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  child: ElevatedButton(
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                            context.read<CloseChatCubit>().closeChat(
+                              chatId: chatId,
+                            );
+                            Navigator.of(dialogContext).pop();
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFF1744),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 10.h,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                    ),
+                    child: isLoading
+                        ? SizedBox(
+                            width: 20.w,
+                            height: 20.w,
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                        : Text(
+                            S.of(context).closeChat,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -411,7 +561,7 @@ class _ChatHeader extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(4.w, 8.h, 16.w, 14.h),
+          padding: EdgeInsets.fromLTRB(4.w, 8.h, 8.w, 14.h),
           child: Row(
             children: [
               // Back button
@@ -522,6 +672,125 @@ class _ChatHeader extends StatelessWidget {
                       },
                     ),
                   ],
+                ),
+              ),
+              // ── Close Chat Button (only if not already closed) ──
+              if (!isClosed)
+                _CloseChatButton(onTap: () => _showCloseChatDialog(context)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CLOSE CHAT BUTTON (App Bar)
+// ══════════════════════════════════════════════════════════════════
+class _CloseChatButton extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _CloseChatButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: S.of(context).closeChat,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12.r),
+          splashColor: Colors.white.withValues(alpha: 0.15),
+          highlightColor: Colors.white.withValues(alpha: 0.08),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withValues(alpha: 0.20),
+                  Colors.white.withValues(alpha: 0.08),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.25),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.close_rounded,
+                  color: const Color(0xFFFFCDD2),
+                  size: 18.sp,
+                ),
+                SizedBox(width: 6.w),
+                Text(
+                  S.of(context).closeChat,
+                  style: TextStyle(
+                    color: const Color(0xFFFFCDD2),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CHAT CLOSED BANNER
+// ══════════════════════════════════════════════════════════════════
+class _ChatClosedBanner extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, -3),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(6.w),
+                decoration: BoxDecoration(
+                  color: AlNasTheme.grey20.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Icon(
+                  Icons.lock_rounded,
+                  color: AlNasTheme.textMuted,
+                  size: 16.sp,
+                ),
+              ),
+              SizedBox(width: 10.w),
+              Text(
+                S.of(context).chatClosed,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: AlNasTheme.textMuted,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -819,6 +1088,7 @@ class _MessageInput extends StatefulWidget {
 
 class _MessageInputState extends State<_MessageInput> {
   bool _hasText = false;
+  bool _showEmojiPicker = false;
 
   @override
   void initState() {
@@ -833,115 +1103,243 @@ class _MessageInputState extends State<_MessageInput> {
     }
   }
 
+  void _toggleEmojiPicker() {
+    if (_showEmojiPicker) {
+      // Hide emoji picker, show keyboard
+      setState(() => _showEmojiPicker = false);
+      widget.focusNode.requestFocus();
+    } else {
+      // Hide keyboard, show emoji picker
+      widget.focusNode.unfocus();
+      setState(() => _showEmojiPicker = true);
+    }
+  }
+
+  void _onEmojiSelected(Category? category, Emoji emoji) {
+    final controller = widget.controller;
+    final text = controller.text;
+    final selection = controller.selection;
+    final cursorPos = selection.baseOffset;
+
+    if (cursorPos < 0) {
+      controller.text = text + emoji.emoji;
+      controller.selection = TextSelection.fromPosition(
+        TextPosition(offset: controller.text.length),
+      );
+    } else {
+      final newText =
+          text.substring(0, cursorPos) +
+          emoji.emoji +
+          text.substring(cursorPos);
+      controller.text = newText;
+      controller.selection = TextSelection.fromPosition(
+        TextPosition(offset: cursorPos + emoji.emoji.length),
+      );
+    }
+  }
+
+  void _onBackspacePressed() {
+    final controller = widget.controller;
+    final text = controller.text;
+    final selection = controller.selection;
+    final cursorPos = selection.baseOffset;
+
+    if (cursorPos > 0 && text.isNotEmpty) {
+      final newText =
+          text.substring(0, cursorPos - 1) + text.substring(cursorPos);
+      controller.text = newText;
+      controller.selection = TextSelection.fromPosition(
+        TextPosition(offset: cursorPos - 1),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, -3),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(12.w, 10.h, 8.w, 10.h),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              // Text field
-              Expanded(
-                child: Container(
-                  constraints: BoxConstraints(maxHeight: 120.h),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF5F7FA),
-                    borderRadius: BorderRadius.circular(24.r),
-                    border: Border.all(
-                      color: _hasText
-                          ? AlNasTheme.blue100.withValues(alpha: 0.25)
-                          : const Color(0xFFE8ECF0),
-                      width: 1,
-                    ),
-                  ),
-                  child: TextField(
-                    controller: widget.controller,
-                    focusNode: widget.focusNode,
-                    maxLines: 5,
-                    minLines: 1,
-                    textInputAction: TextInputAction.newline,
-                    style: TextStyle(
-                      fontSize: 15.sp,
-                      color: AlNasTheme.textDark,
-                      height: 1.4,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: S.of(context).typeAMessage,
-                      hintStyle: TextStyle(
-                        color: AlNasTheme.textMuted.withValues(alpha: 0.5),
-                        fontSize: 15.sp,
-                      ),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 12.h,
-                      ),
-                      filled: false,
-                    ),
-                  ),
-                ),
-              ),
-
-              SizedBox(width: 8.w),
-
-              // Send button with smooth animation
-              AnimatedScale(
-                scale: _hasText ? 1.0 : 0.85,
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeOut,
-                child: GestureDetector(
-                  onTap: _hasText ? widget.onSend : null,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: 48.w,
-                    height: 48.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: _hasText
-                          ? const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(0xFF0077B6), Color(0xFF00A3E6)],
-                            )
-                          : null,
-                      color: _hasText ? null : const Color(0xFFE8ECF0),
-                      boxShadow: _hasText
-                          ? [
-                              BoxShadow(
-                                color: const Color(
-                                  0xFF0077B6,
-                                ).withValues(alpha: 0.3),
-                                blurRadius: 10,
-                                offset: const Offset(0, 3),
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Icon(
-                      Icons.send_rounded,
-                      color: _hasText ? Colors.white : AlNasTheme.grey40,
-                      size: 22.sp,
-                    ),
-                  ),
-                ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // ── Input Bar ──
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 12,
+                offset: const Offset(0, -3),
               ),
             ],
           ),
+          child: SafeArea(
+            top: false,
+            bottom: !_showEmojiPicker,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(12.w, 10.h, 8.w, 10.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // Text field
+                  Expanded(
+                    child: Container(
+                      constraints: BoxConstraints(maxHeight: 120.h),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F7FA),
+                        borderRadius: BorderRadius.circular(24.r),
+                        border: Border.all(
+                          color: _hasText
+                              ? AlNasTheme.blue100.withValues(alpha: 0.25)
+                              : const Color(0xFFE8ECF0),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          // Text input
+                          Expanded(
+                            child: TextField(
+                              controller: widget.controller,
+                              focusNode: widget.focusNode,
+                              maxLines: 5,
+                              minLines: 1,
+                              onTap: () {
+                                if (_showEmojiPicker) {
+                                  setState(() => _showEmojiPicker = false);
+                                }
+                              },
+                              textInputAction: TextInputAction.newline,
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                color: AlNasTheme.textDark,
+                                height: 1.4,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: S.of(context).typeAMessage,
+                                hintStyle: TextStyle(
+                                  color: AlNasTheme.textMuted.withValues(
+                                    alpha: 0.5,
+                                  ),
+                                  fontSize: 15.sp,
+                                ),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 8.w,
+                                  vertical: 12.h,
+                                ),
+                                filled: false,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(width: 8.w),
+
+                  // Send button with smooth animation
+                  AnimatedScale(
+                    scale: _hasText ? 1.0 : 0.85,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOut,
+                    child: GestureDetector(
+                      onTap: _hasText ? widget.onSend : null,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        width: 48.w,
+                        height: 48.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: _hasText
+                              ? const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xFF0077B6),
+                                    Color(0xFF00A3E6),
+                                  ],
+                                )
+                              : null,
+                          color: _hasText ? null : const Color(0xFFE8ECF0),
+                          boxShadow: _hasText
+                              ? [
+                                  BoxShadow(
+                                    color: const Color(
+                                      0xFF0077B6,
+                                    ).withValues(alpha: 0.3),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: Icon(
+                          Icons.send_rounded,
+                          color: _hasText ? Colors.white : AlNasTheme.grey40,
+                          size: 22.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-      ),
+
+        // ── Emoji Picker Panel ──
+        if (_showEmojiPicker)
+          SafeArea(
+            top: false,
+            child: SizedBox(
+              height: 280.h,
+              child: EmojiPicker(
+                onEmojiSelected: _onEmojiSelected,
+                onBackspacePressed: _onBackspacePressed,
+                config: Config(
+                  height: 280.h,
+                  checkPlatformCompatibility: true,
+                  emojiViewConfig: EmojiViewConfig(
+                    emojiSizeMax:
+                        28 *
+                        (foundation.defaultTargetPlatform ==
+                                foundation.TargetPlatform.iOS
+                            ? 1.2
+                            : 1.0),
+                    backgroundColor: const Color(0xFFF5F7FA),
+                    columns: 8,
+                    verticalSpacing: 0,
+                    horizontalSpacing: 0,
+                    recentsLimit: 28,
+                    noRecents: Text(
+                      'No Recents',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: AlNasTheme.textMuted,
+                      ),
+                    ),
+                    buttonMode: ButtonMode.MATERIAL,
+                  ),
+                  categoryViewConfig: CategoryViewConfig(
+                    backgroundColor: const Color(0xFFF5F7FA),
+                    indicatorColor: AlNasTheme.blue100,
+                    iconColorSelected: AlNasTheme.blue100,
+                    iconColor: AlNasTheme.textMuted.withValues(alpha: 0.5),
+                    categoryIcons: const CategoryIcons(),
+                  ),
+                  bottomActionBarConfig: const BottomActionBarConfig(
+                    enabled: false,
+                  ),
+                  searchViewConfig: SearchViewConfig(
+                    backgroundColor: const Color(0xFFF5F7FA),
+                    buttonIconColor: AlNasTheme.textMuted,
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

@@ -72,5 +72,9 @@
   "disconnected": "غير متصل",
   "retry": "إعادة المحاولة",
   "reconnect": "إعادة الاتصال",
-  "chatWith": "محادثة مع"
+  "chatWith": "محادثة مع",
+  "closeChatConfirmation": "هل أنت متأكد أنك تريد إغلاق هذه المحادثة؟",
+  "closeChatSuccess": "تم إغلاق المحادثة بنجاح",
+  "closeChatFailed": "فشل إغلاق المحادثة",
+  "chatClosed": "تم إغلاق هذه المحادثة"
 }

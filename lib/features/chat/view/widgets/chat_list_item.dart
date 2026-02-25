@@ -72,19 +72,18 @@ class ChatListItem extends StatelessWidget {
     final sColor = _statusColor(chat.status);
 
     return InkWell(
-      onTap: chat.status == 'closed'
-          ? null
-          : () {
-              context.push(
-                ChatDetailPage.routeName,
-                extra: {
-                  'chat_id': chat.id!,
-                  'patient_id': chat.patientId!,
-                  'doctor_id': chat.doctorId!,
-                  'patient_name': chat.patientName ?? 'Patient',
-                },
-              );
-            },
+      onTap: () {
+        context.push(
+          ChatDetailPage.routeName,
+          extra: {
+            'chat_id': chat.id!,
+            'patient_id': chat.patientId!,
+            'doctor_id': chat.doctorId!,
+            'patient_name': chat.patientName ?? 'Patient',
+            'is_closed': chat.status == 'closed',
+          },
+        );
+      },
       borderRadius: BorderRadius.circular(16.r),
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 6.h, horizontal: 16.w),
@@ -270,18 +269,18 @@ class ChatListItem extends StatelessWidget {
                                   );
                                 },
                               ),
-                              SizedBox(width: 8.w),
+                              // SizedBox(width: 8.w),
 
-                              _ActionButton(
-                                icon: Icons.close_rounded,
-                                color: AlNasTheme.red100,
-                                tooltip: 'Close Chat',
-                                onTap: () {
-                                  context.read<CloseChatCubit>().closeChat(
-                                    chatId: chat.id!,
-                                  );
-                                },
-                              ),
+                              // _ActionButton(
+                              //   icon: Icons.close_rounded,
+                              //   color: AlNasTheme.red100,
+                              //   tooltip: 'Close Chat',
+                              //   onTap: () {
+                              //     context.read<CloseChatCubit>().closeChat(
+                              //       chatId: chat.id!,
+                              //     );
+                              //   },
+                              // ),
                             ],
                           ],
                         ),

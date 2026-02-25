@@ -28,10 +28,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "changeLanguage": MessageLookupByLibrary.simpleMessage("Change Language"),
     "changePassword": MessageLookupByLibrary.simpleMessage("Change Password"),
+    "chatClosed": MessageLookupByLibrary.simpleMessage(
+      "This chat has been closed",
+    ),
     "chatRequests": MessageLookupByLibrary.simpleMessage("Chat Requests"),
     "chatWith": MessageLookupByLibrary.simpleMessage("Chat with"),
     "chats": MessageLookupByLibrary.simpleMessage("Chats"),
     "closeChat": MessageLookupByLibrary.simpleMessage("Close Chat"),
+    "closeChatConfirmation": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to close this chat?",
+    ),
+    "closeChatFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to close chat",
+    ),
+    "closeChatSuccess": MessageLookupByLibrary.simpleMessage(
+      "Chat closed successfully",
+    ),
     "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
     "confirmNewPassword": MessageLookupByLibrary.simpleMessage(
       "Confirm New Password",

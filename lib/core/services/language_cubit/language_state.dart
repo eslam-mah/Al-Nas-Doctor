@@ -7,7 +7,7 @@ abstract class LanguageState {
 }
 
 class LanguageInitial extends LanguageState {
-  const LanguageInitial() : super(const Locale('ar'));
+  const LanguageInitial() : super(const Locale('en'));
 }
 
 class LanguageLoaded extends LanguageState {

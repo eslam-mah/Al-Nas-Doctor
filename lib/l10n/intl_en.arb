@@ -72,5 +72,9 @@
   "disconnected": "Disconnected",
   "retry": "Retry",
   "reconnect": "Reconnect",
-  "chatWith": "Chat with"
+  "chatWith": "Chat with",
+  "closeChatConfirmation": "Are you sure you want to close this chat?",
+  "closeChatSuccess": "Chat closed successfully",
+  "closeChatFailed": "Failed to close chat",
+  "chatClosed": "This chat has been closed"
 }

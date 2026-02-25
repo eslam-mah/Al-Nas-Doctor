@@ -613,6 +613,46 @@ class S {
   String get chatWith {
     return Intl.message('Chat with', name: 'chatWith', desc: '', args: []);
   }
+
+  /// `Are you sure you want to close this chat?`
+  String get closeChatConfirmation {
+    return Intl.message(
+      'Are you sure you want to close this chat?',
+      name: 'closeChatConfirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chat closed successfully`
+  String get closeChatSuccess {
+    return Intl.message(
+      'Chat closed successfully',
+      name: 'closeChatSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to close chat`
+  String get closeChatFailed {
+    return Intl.message(
+      'Failed to close chat',
+      name: 'closeChatFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This chat has been closed`
+  String get chatClosed {
+    return Intl.message(
+      'This chat has been closed',
+      name: 'chatClosed',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

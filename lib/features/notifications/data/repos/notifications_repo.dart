@@ -13,6 +13,7 @@ class NotificationsRepo {
       "fcm_token": fcmToken,
       "device_id": deviceId,
       "user_id": userId,
+      "user_type": "doctor",
     };
 
     final result = await DioHelper.postData(

@@ -28,10 +28,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancel": MessageLookupByLibrary.simpleMessage("إلغاء"),
     "changeLanguage": MessageLookupByLibrary.simpleMessage("تغيير اللغة"),
     "changePassword": MessageLookupByLibrary.simpleMessage("تغيير كلمة المرور"),
+    "chatClosed": MessageLookupByLibrary.simpleMessage("تم إغلاق هذه المحادثة"),
     "chatRequests": MessageLookupByLibrary.simpleMessage("طلبات المحادثة"),
     "chatWith": MessageLookupByLibrary.simpleMessage("محادثة مع"),
     "chats": MessageLookupByLibrary.simpleMessage("المحادثات"),
     "closeChat": MessageLookupByLibrary.simpleMessage("إغلاق المحادثة"),
+    "closeChatConfirmation": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد أنك تريد إغلاق هذه المحادثة؟",
+    ),
+    "closeChatFailed": MessageLookupByLibrary.simpleMessage(
+      "فشل إغلاق المحادثة",
+    ),
+    "closeChatSuccess": MessageLookupByLibrary.simpleMessage(
+      "تم إغلاق المحادثة بنجاح",
+    ),
     "confirm": MessageLookupByLibrary.simpleMessage("تأكيد"),
     "confirmNewPassword": MessageLookupByLibrary.simpleMessage(
       "تأكيد كلمة المرور الجديدة",

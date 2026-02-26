@@ -159,10 +159,28 @@ class _ChatDetailPageState extends State<ChatDetailPage>
           if (widget.isClosed)
             _ChatClosedBanner()
           else
-            _MessageInput(
-              controller: _messageController,
-              focusNode: _focusNode,
-              onSend: _sendMessage,
+            BlocBuilder<ChatDetailCubit, ChatDetailState>(
+              buildWhen: (previous, current) {
+                return current is ChatDetailConnected ||
+                    current is ChatDetailReconnecting ||
+                    current is ChatDetailDisconnected ||
+                    current is ChatDetailConnectionError ||
+                    current is ChatDetailLoading ||
+                    current is ChatDetailMessageReceived ||
+                    current is ChatDetailMessageSent;
+              },
+              builder: (context, state) {
+                final isConnected =
+                    state is ChatDetailConnected ||
+                    state is ChatDetailMessageReceived ||
+                    state is ChatDetailMessageSent;
+                return _MessageInput(
+                  controller: _messageController,
+                  focusNode: _focusNode,
+                  onSend: _sendMessage,
+                  isConnected: isConnected,
+                );
+              },
             ),
         ],
       ),
@@ -1075,11 +1093,13 @@ class _MessageInput extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final VoidCallback onSend;
+  final bool isConnected;
 
   const _MessageInput({
     required this.controller,
     required this.focusNode,
     required this.onSend,
+    this.isConnected = true,
   });
 
   @override
@@ -1201,6 +1221,7 @@ class _MessageInputState extends State<_MessageInput> {
                             child: TextField(
                               controller: widget.controller,
                               focusNode: widget.focusNode,
+                              enabled: widget.isConnected,
                               maxLines: 5,
                               minLines: 1,
                               onTap: () {
@@ -1211,11 +1232,15 @@ class _MessageInputState extends State<_MessageInput> {
                               textInputAction: TextInputAction.newline,
                               style: TextStyle(
                                 fontSize: 15.sp,
-                                color: AlNasTheme.textDark,
+                                color: widget.isConnected
+                                    ? AlNasTheme.textDark
+                                    : AlNasTheme.textMuted,
                                 height: 1.4,
                               ),
                               decoration: InputDecoration(
-                                hintText: S.of(context).typeAMessage,
+                                hintText: widget.isConnected
+                                    ? S.of(context).typeAMessage
+                                    : S.of(context).connecting,
                                 hintStyle: TextStyle(
                                   color: AlNasTheme.textMuted.withValues(
                                     alpha: 0.5,
@@ -1237,21 +1262,55 @@ class _MessageInputState extends State<_MessageInput> {
                   ),
 
                   SizedBox(width: 8.w),
-
+                  // Emoji toggle button
+                  Opacity(
+                    opacity: widget.isConnected ? 1.0 : 0.4,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 4.w, bottom: 4.h),
+                      child: GestureDetector(
+                        onTap: widget.isConnected ? _toggleEmojiPicker : null,
+                        child: Container(
+                          width: 40.w,
+                          height: 40.h,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AlNasTheme.grey100.withValues(alpha: 0.1),
+                          ),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 200),
+                            transitionBuilder: (child, animation) =>
+                                ScaleTransition(scale: animation, child: child),
+                            child: Icon(
+                              _showEmojiPicker
+                                  ? Icons.keyboard_rounded
+                                  : Icons.emoji_emotions_outlined,
+                              key: ValueKey(_showEmojiPicker),
+                              color: _showEmojiPicker
+                                  ? AlNasTheme.blue100
+                                  : AlNasTheme.textMuted.withValues(alpha: 0.6),
+                              size: 24.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   // Send button with smooth animation
                   AnimatedScale(
-                    scale: _hasText ? 1.0 : 0.85,
+                    scale: (_hasText && widget.isConnected) ? 1.0 : 0.85,
                     duration: const Duration(milliseconds: 200),
                     curve: Curves.easeOut,
                     child: GestureDetector(
-                      onTap: _hasText ? widget.onSend : null,
+                      onTap: (_hasText && widget.isConnected)
+                          ? widget.onSend
+                          : null,
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         width: 48.w,
                         height: 48.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: _hasText
+                          gradient: (_hasText && widget.isConnected)
                               ? const LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
@@ -1261,8 +1320,10 @@ class _MessageInputState extends State<_MessageInput> {
                                   ],
                                 )
                               : null,
-                          color: _hasText ? null : const Color(0xFFE8ECF0),
-                          boxShadow: _hasText
+                          color: (_hasText && widget.isConnected)
+                              ? null
+                              : const Color(0xFFE8ECF0),
+                          boxShadow: (_hasText && widget.isConnected)
                               ? [
                                   BoxShadow(
                                     color: const Color(
@@ -1276,7 +1337,9 @@ class _MessageInputState extends State<_MessageInput> {
                         ),
                         child: Icon(
                           Icons.send_rounded,
-                          color: _hasText ? Colors.white : AlNasTheme.grey40,
+                          color: (_hasText && widget.isConnected)
+                              ? Colors.white
+                              : AlNasTheme.grey40,
                           size: 22.sp,
                         ),
                       ),

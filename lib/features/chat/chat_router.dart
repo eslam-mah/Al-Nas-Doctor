@@ -27,6 +27,7 @@ class ChatRouter {
             patientId: extra['patient_id'] as int,
             doctorId: extra['doctor_id'] as int,
             patientName: extra['patient_name'] as String,
+            isClosed: extra['is_closed'] as bool? ?? false,
           ),
         );
       },

@@ -16,9 +16,9 @@ class ChatListItem extends StatelessWidget {
   // ── Status helpers ──────────────────────────────────────────────
   Color _statusColor(String? status) {
     switch (status?.toLowerCase()) {
-      case 'accepted':
+      case 'active':
         return const Color(0xFF00C853); // vibrant green
-      case 'rejected':
+      case 'closed':
         return const Color(0xFFFF1744); // vibrant red
       case 'pending':
         return const Color(0xFFFFAB00); // vibrant amber
@@ -29,9 +29,9 @@ class ChatListItem extends StatelessWidget {
 
   IconData _statusIcon(String? status) {
     switch (status?.toLowerCase()) {
-      case 'accepted':
+      case 'active':
         return Icons.check_circle_rounded;
-      case 'rejected':
+      case 'closed':
         return Icons.cancel_rounded;
       case 'pending':
         return Icons.schedule_rounded;
@@ -42,10 +42,10 @@ class ChatListItem extends StatelessWidget {
 
   String _statusLabel(String? status) {
     switch (status?.toLowerCase()) {
-      case 'accepted':
-        return 'Accepted';
-      case 'rejected':
-        return 'Rejected';
+      case 'active':
+        return 'Active';
+      case 'closed':
+        return 'Closed';
       case 'pending':
         return 'Pending';
       default:
@@ -55,9 +55,9 @@ class ChatListItem extends StatelessWidget {
 
   List<Color> _accentGradient(String? status) {
     switch (status?.toLowerCase()) {
-      case 'accepted':
+      case 'active':
         return [const Color(0xFF00C853), const Color(0xFF69F0AE)];
-      case 'rejected':
+      case 'closed':
         return [const Color(0xFFFF1744), const Color(0xFFFF8A80)];
       case 'pending':
         return [const Color(0xFFFFAB00), const Color(0xFFFFE57F)];
@@ -265,6 +265,7 @@ class ChatListItem extends StatelessWidget {
                                       'doctor_id': chat.doctorId!,
                                       'patient_name':
                                           chat.patientName ?? 'Patient',
+                                      'is_closed': chat.status == 'closed',
                                     },
                                   );
                                 },
